@@ -6,6 +6,7 @@ import { join } from "path"
 import blogsRouter from "./api/blogs/index.js"
 import { badRequestHandler, unauthorizedHandler, notFoundHandler, genericErrorHandler } from "./errorHandlers.js"
 import filesRouter from "./api/files/index.js"
+import { getBlogs } from "./lib/fs-tools.js"
 
 const server = express()
 
@@ -34,7 +35,7 @@ server.use(cors(corsOptions))
 // ****************** ENDPOINTS ********************
 server.use("/authors", authorsRouter)
 server.use("/blogs", blogsRouter)
-server.use("/blogs", filesRouter)
+server.use("/files", filesRouter)
 // ****************** ERROR HANDLERS ****************
 server.use(badRequestHandler) // 400
 server.use(unauthorizedHandler) // 401
@@ -44,4 +45,6 @@ server.use(genericErrorHandler) // 500
 server.listen(port, () => {
   console.table(listEndpoints(server))
   console.log("server is running on port:", port)
+  // const blogs = await getBlogs()
+  // console.log(blogs)
 })
