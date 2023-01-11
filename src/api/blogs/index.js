@@ -1,6 +1,8 @@
 import express from "express"
 import uniqid from "uniqid"
 import httpErrors from "http-errors"
+import { pipeline } from "stream"
+import { getPDFReadableStream } from "../../lib/pdf-tools.js"
 import { checkBlogsSchema, triggerBadRequest } from "./validator.js"
 import { getBlogs, writeBlog } from "../../lib/fs-tools.js"
 
@@ -95,6 +97,17 @@ blogsRouter.delete("/:blogId", async (req, res, next) => {
   } catch (error) {
     next(error)
   }
+})
+
+blogsRouter.get("/pdf", (req, res, next) => {
+  const blogsArray = getBlogs()
+  res.setHeader("Content-Disposition", "attachment; filename=blogs.pdf")
+  const source = getPDFReadableStream(blogsArray)
+  const destination = res
+
+  pipeline(source, destination, (err) => {
+    if (err) console.log(err)
+  })
 })
 
 export default blogsRouter

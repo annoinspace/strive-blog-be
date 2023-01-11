@@ -3,8 +3,6 @@ import multer from "multer"
 import { extname } from "path"
 import { v2 as cloudinary } from "cloudinary"
 import { CloudinaryStorage } from "multer-storage-cloudinary"
-import { pipeline } from "stream"
-import { createGzip } from "zlib"
 import { getBlogs, writeBlog, saveCoverPhoto } from "../../lib/fs-tools.js"
 
 const filesRouter = express.Router()
@@ -42,17 +40,6 @@ filesRouter.post("/:blogId/uploadCover", cloudinaryUploader, async (req, res, ne
   } catch (error) {
     next(error)
   }
-})
-
-filesRouter.get("/:blogId/blogpdf", (req, res, next) => {
-  res.setHeader("Content-Disposition", "attachment; filename=test.pdf")
-  const blogsArray = getBlogs()
-  const source = getPDFReadableStream(blogsArray)
-  const destination = res
-
-  pipeline(source, destination, (err) => {
-    if (err) console.log(err)
-  })
 })
 
 export default filesRouter

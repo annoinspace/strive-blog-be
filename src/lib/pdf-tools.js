@@ -8,14 +8,19 @@ export const getPDFReadableStream = (blogsArray) => {
   }
   const printer = new PdfPrinter(fonts)
 
-  console.log(
-    blogsArray.map((blog) => {
-      return [blog.title, blog.category, blog.author.name]
-    })
-  )
-
   const docDefinition = {
-    content: [blogsArray[0].title, blogsArray[0].category]
+    content: [
+      blogsArray.map((blog) => {
+        return [
+          {
+            text: blog.title
+          },
+          {
+            text: blog.category
+          }
+        ]
+      })
+    ]
   }
 
   const pdfReadableStream = printer.createPdfKitDocument(docDefinition)
