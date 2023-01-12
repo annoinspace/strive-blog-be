@@ -80,7 +80,7 @@ filesRouter.post("/register", async (req, res, next) => {
   try {
     const { email } = req.body
     await sendRegistrationEmail(email)
-    res.send({ message: "email sent" })
+    res.send({ message: `email sent successfully to - ${email}` })
   } catch (error) {
     next(error)
   }
