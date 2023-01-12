@@ -5,6 +5,7 @@ import httpErrors from "http-errors"
 // import { getPDFReadableStream } from "../../lib/pdf-tools.js"
 import { checkBlogsSchema, triggerBadRequest } from "./validator.js"
 import { getBlogs, writeBlog } from "../../lib/fs-tools.js"
+import { sendRegistrationEmail } from "../../lib/email-tools.js"
 
 const { NotFound } = httpErrors
 
@@ -109,5 +110,15 @@ blogsRouter.delete("/:blogId", async (req, res, next) => {
 //     if (err) console.log(err)
 //   })
 // })
+
+blogsRouter.post("/register", async (req, res, next) => {
+  try {
+    const { email } = req.body
+    await sendRegistrationEmail(email)
+    res.send()
+  } catch (error) {
+    next(error)
+  }
+})
 
 export default blogsRouter

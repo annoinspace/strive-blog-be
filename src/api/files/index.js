@@ -5,8 +5,9 @@ import { pipeline } from "stream"
 import { getPDFReadableStream } from "../../lib/pdf-tools.js"
 import { v2 as cloudinary } from "cloudinary"
 import { CloudinaryStorage } from "multer-storage-cloudinary"
-import { getBlogs, writeBlog, saveCoverPhoto } from "../../lib/fs-tools.js"
-
+import json2csv from "json2csv"
+import { getBlogs, writeBlog, saveCoverPhoto, getBlogsJsonReadableStream } from "../../lib/fs-tools.js"
+import { sendRegistrationEmail } from "../../lib/email-tools.js"
 const filesRouter = express.Router()
 
 const cloudinaryUploader = multer({
@@ -44,6 +45,8 @@ filesRouter.post("/:blogId/uploadCover", cloudinaryUploader, async (req, res, ne
   }
 })
 
+// get all blogs + specified info as pdf
+
 filesRouter.get("/pdf", async (req, res, next) => {
   const blogsArray = await getBlogs()
   res.setHeader("Content-Disposition", "attachment; filename=blogs.pdf")
@@ -56,3 +59,31 @@ filesRouter.get("/pdf", async (req, res, next) => {
 })
 
 export default filesRouter
+
+// get blogs and specified info as CSV file
+
+filesRouter.get("/csv", async (req, res, next) => {
+  try {
+    const source = await getBlogsJsonReadableStream()
+    res.setHeader("Content-Disposition", "attachment; filename=blogscsv.csv")
+    const transform = new json2csv.Transform({ fields: ["_id", "title", "category"] })
+    const destination = res
+    pipeline(source, transform, destination, (err) => {
+      if (err) console.log(err)
+    })
+  } catch (error) {
+    next(error)
+  }
+})
+
+filesRouter.post("/register", async (req, res, next) => {
+  try {
+    const { email } = req.body
+    await sendRegistrationEmail(email)
+    res.send({ message: "email sent" })
+  } catch (error) {
+    next(error)
+  }
+})
+
+// adlflg;
