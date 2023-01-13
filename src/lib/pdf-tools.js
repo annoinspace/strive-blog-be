@@ -1,7 +1,6 @@
 import PdfPrinter from "pdfmake"
 
 export const getPDFReadableStream = (blogsArray) => {
-  //   console.log(blogsArray)
   const fonts = {
     Roboto: {
       normal: "Helvetica"
@@ -23,13 +22,8 @@ export const getPDFReadableStream = (blogsArray) => {
           }
         ]
       })
-      //   return [text: blogPost[0].title, blogPost[0].category, blogPost[0].price]
-      //   blogsArray.forEach((blogPost) => {
-      //     return [blogPost.title, blogPost.category, blogPost.price]
-      //   })
     ],
     styles: {
-      // does not work for undefinable reasons
       header: {
         fontSize: 48
       }
